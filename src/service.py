@@ -48,8 +48,9 @@ def count_words_from_url(url: str):
 
     words_counter = 0
 
-    file = url_request.urlopen(url)
-    for line in file:
+    # TODO: Document assumption regarding txt files
+    req = url_request.urlopen(url)
+    for line in req:
         decoded_line = line.decode("utf-8")
         words = re.findall(r'\w+', decoded_line.lower())
         words_counter += len(words)
@@ -98,6 +99,7 @@ def word_statistics(word: str):
 
     count = int(WORDS_COUNT.get(word) or 0)
 
+    # The design docs asked for a number but for the debugging I prefer a nice info text :)
     if app.debug:
         return f'The word "{word}" appear {count} times'
     else:
