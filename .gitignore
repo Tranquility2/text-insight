@@ -42,3 +42,6 @@ venv.bak/
 
 # Pycharm
 .idea/
+
+# Temp
+tmp/
