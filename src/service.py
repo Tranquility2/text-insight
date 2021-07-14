@@ -1,5 +1,6 @@
 import re
 import os
+import tempfile
 import validators
 
 from collections import Counter
@@ -8,14 +9,18 @@ from os import path
 from flask import Flask
 from flask import Response
 from flask import request
-from urllib import request as url_request
+
+from src.utils import timeit, read_in_chunks, download_text_file
 
 app = Flask(__name__)
 
 WORDS_COUNT = Counter()
 
+# TODO: Document assumption regarding txt files + utf-8
 
-def count_words_in_string(source_string: str):
+
+@timeit
+def count_words_in_blob(source_string: str):
     # First do some sanity on the input data
     if not isinstance(source_string, str):
         raise ValueError("Source string is not valid")
@@ -27,41 +32,30 @@ def count_words_in_string(source_string: str):
         print(f"Added #{len(words)} elements to the Counter")
 
 
+@timeit
 def count_words_in_local_file(file_path: str):
     os_file_path = os.path.normcase(file_path)
     # First do some sanity on the input data
     if not path.isfile(os_file_path):
         raise ValueError(f"Could not find the file: {os_file_path}")
 
-    # TODO: This is very inefficient, try with reuse count_words_in_string
-    words = re.findall(r'\w+', open(os_file_path).read().lower())
-    WORDS_COUNT.update(words)
-
-    if app.debug:
-        print(f"Added #{len(words)} elements to the Counter")
+    with open(file_path, encoding='UTF-8') as f:
+        for piece in read_in_chunks(file_object=f, chunk_size=1024 * 1024):
+            count_words_in_blob(piece)
 
 
+@timeit
 def count_words_from_url(url: str):
     # First do some sanity on the input data
     if not validators.url(url):
         raise ValueError(f"The URL: {url} is not valid")
 
-    words_counter = 0
-
-    # TODO: Document assumption regarding txt files
-    req = url_request.urlopen(url)
-    for line in req:
-        decoded_line = line.decode("utf-8")
-        words = re.findall(r'\w+', decoded_line.lower())
-        words_counter += len(words)
-        WORDS_COUNT.update(words)
-
-    if app.debug:
-        print(f"Added #{words_counter} elements to the Counter")
+    local_filename = download_text_file(url, chunk_size=4096, base_path=tempfile.gettempdir())
+    count_words_in_local_file(local_filename)
 
 
 @app.route("/word_counter", methods=['POST'])
-def word_counter():
+def word_counter() -> Response:
     """Receives a text input and counts the number of appearances for each word in the input."""
     if app.debug:
         # Print some useful stuff if we are debugging
@@ -71,7 +65,7 @@ def word_counter():
         # Simple
         simple_string = request.args.get('string')
         if simple_string:
-            count_words_in_string(simple_string)
+            count_words_in_blob(simple_string)
 
         # File Path (local)
         local_file_path = request.args.get('path')
