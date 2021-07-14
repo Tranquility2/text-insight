@@ -9,4 +9,4 @@ COPY ./src .
 
 EXPOSE 5000
 
-CMD [ "python3", "service.py"]
+CMD [ "python3", "app.py"]

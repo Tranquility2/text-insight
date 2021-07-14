@@ -1,6 +1,7 @@
 import datetime
 import time
 import requests
+import humanfriendly
 
 from functools import wraps
 from typing import Any, Callable
@@ -16,7 +17,7 @@ def timeit(func: Callable[..., Any]) -> Callable[..., Any]:
         start_time = time.time()
         result = func(*args, **kwargs)
         elapsed_time = datetime.timedelta(seconds=(time.time() - start_time))
-        print(f"time spent on {func.__name__}: {elapsed_time}")
+        print(f"Time spent on {func.__name__}: {elapsed_time}")
         return result
 
     return timed_func
@@ -39,6 +40,12 @@ def read_in_chunks(file_object, chunk_size: int = 1024) -> str:
         yield data
 
 
+def get_file_size_friendly(file_path: str):
+    file_size = path.getsize(file_path)
+    return humanfriendly.format_size(file_size, binary=True)
+
+
+@timeit
 def download_text_file(url: str, chunk_size: int = 1024, base_path=None):
     """Basic file downloader using an iterator.
     Default chunk size: 1k."""
@@ -54,4 +61,5 @@ def download_text_file(url: str, chunk_size: int = 1024, base_path=None):
                 text_file.write(chunk)
             # TODO: cleanup this file (should be a temp)
 
+    print(f"Downloaded {get_file_size_friendly(full_path)}")
     return full_path
