@@ -40,7 +40,8 @@ def count_words_in_local_file(file_path: str):
         raise ValueError(f"Could not find the file: {os_file_path}")
 
     with open(file_path, encoding='UTF-8') as f:
-        for piece in read_in_chunks(file_object=f, chunk_size=1024 * 1024):
+        for piece in read_in_chunks(file_object=f,
+                                    chunk_size=1024 * 1024):
             count_words_in_blob(piece)
 
 
@@ -50,7 +51,9 @@ def count_words_from_url(url: str):
     if not validators.url(url):
         raise ValueError(f"The URL: {url} is not valid")
 
-    local_filename = download_text_file(url, chunk_size=4096, base_path=tempfile.gettempdir())
+    local_filename = download_text_file(url=url,
+                                        chunk_size=4096,
+                                        base_path=tempfile.gettempdir())
     count_words_in_local_file(local_filename)
 
 
