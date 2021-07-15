@@ -11,6 +11,11 @@ word_count_service = WordCountService()
 # TODO: Document assumption regarding txt files + utf-8
 
 
+@app.route("/ping", methods=['GET'])
+async def ping():
+    return "pong"
+
+
 @app.route("/word_counter", methods=['POST'])
 async def word_counter():
     """Receives a text input and counts the number of appearances for each word in the input."""
@@ -20,7 +25,7 @@ async def word_counter():
 
     input_type = request.args.get('type')
     input_string = request.args.get('input')
-    await word_count_service.run_option(input_type, input_string)
+    word_count_service.run_option(input_type, input_string)
 
     return 'Success'
 

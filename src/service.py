@@ -17,7 +17,7 @@ class WordCountService:
     WORDS_COUNT = Counter()
 
     # @timeit
-    async def count_words_in_string(self, source_string: str):
+    def count_words_in_string(self, source_string: str):
         # First do some sanity on the input data
         if not isinstance(source_string, str):
             raise ValueError("Source string is not valid")
@@ -29,7 +29,7 @@ class WordCountService:
         print(f"Added #{len(words)} elements to the Counter")
 
     # @timeit
-    async def count_words_in_local_file(self, file_path: str):
+    def count_words_in_local_file(self, file_path: str):
         os_file_path = os.path.normcase(file_path)
         # First do some sanity on the input data
         if not path.isfile(os_file_path):
@@ -38,10 +38,10 @@ class WordCountService:
         with open(file_path, encoding='UTF-8') as f:
             for piece in read_in_chunks(file_object=f,
                                         chunk_size=1024 * 1024):
-                await self.count_words_in_string(piece)
+                self.count_words_in_string(piece)
 
     # @timeit
-    async def count_words_from_url(self, url: str):
+    def count_words_from_url(self, url: str):
         # First do some sanity on the input data
         if not validators.url(url):
             raise ValueError(f"The URL: {url} is not valid")
@@ -49,9 +49,9 @@ class WordCountService:
         local_filename = download_text_file(url=url,
                                             chunk_size=4096,
                                             base_path=tempfile.gettempdir())
-        await self.count_words_in_local_file(local_filename)
+        self.count_words_in_local_file(local_filename)
 
-    async def run_option(self, input_type: str, input_data: str):
+    def run_option(self, input_type: str, input_data: str):
         """ Get the option based on the input type.
          if not known - raise error. """
         options = {
@@ -65,7 +65,7 @@ class WordCountService:
             raise ValueError("Unknown/Missing input type")
         try:
             option = options.get(input_type)
-            await option(input_data)
+            option(input_data)
         except (ValueError, HTTPError) as e:
             # TODO: More excepts should go here
             print(f"[Error] {e}")
