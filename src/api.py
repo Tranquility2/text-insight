@@ -5,7 +5,6 @@ from flask import Flask
 from flask import request
 
 from werkzeug.utils import secure_filename
-from requests import HTTPError
 
 from service import WordCountService
 from utils import get_file_size_friendly, config_logs
@@ -49,12 +48,9 @@ class BackendApi:
 
             input_type = request.args.get('type')
             input_string = request.args.get('input')
-            try:
-                option = self.word_count_service.get_option(input_type)
-                option(input_string)
-            except (ValueError, HTTPError) as e:
-                # TODO: More excepts should go here
-                self.logger.error(f"[Error] {e}")
+
+            self.word_count_service.run_option(input_type=input_type,
+                                               input_string=input_string)
 
             return 'Success'
 

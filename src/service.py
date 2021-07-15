@@ -1,17 +1,14 @@
 """
 Word count service for Text Insight
 """
-import re
-import os
 import tempfile
-from typing import List
-
 import validators
 import redis
+from celery import chain
 
-from os import path
+from requests import HTTPError
 
-from utils import timeit, read_in_chunks, download_text_file
+from tasks import count_words_in_string, count_words_in_local_file, download_text_file
 
 
 class WordCountService:
@@ -24,58 +21,42 @@ class WordCountService:
         self.logger.info(f"New -WordCountService-")
         self.rd = redis.Redis(host='localhost', port=6379, db=0)
 
-    def update_words_in_redis(self, words: List[str]):
-        for word in words:
-            self.rd.hincrby('known', word, 1)  # This is atomic
-
     def get_word_count_from_redis(self, word: str):
-        return self.rd.hget('known', word)
+        return self.rd.hget(f'known', word)
 
-    def count_words_in_string(self, source_string: str):
-        # First do some sanity on the input data
-        if not isinstance(source_string, str):
-            raise ValueError("Source string is not valid")
-
-        words = re.findall(r'\w+', source_string.lower())
-        self.logger.debug(f"Found #{len(words)} elements")
-        self.update_words_in_redis(words)
-
-    @timeit
-    def count_words_in_local_file(self, file_path: str):
-        os_file_path = os.path.normcase(file_path)
-        # First do some sanity on the input data
-        if not path.isfile(os_file_path):
-            raise ValueError(f"Could not find the file: {os_file_path}")
-
-        with open(file_path, encoding='UTF-8') as f:
-            for piece in read_in_chunks(file_object=f,
-                                        chunk_size=1024 * 100):
-                self.count_words_in_string(piece)
-
-    @timeit
-    def count_words_from_url(self, url: str):
+    @staticmethod
+    def count_words_from_url(url: str):
         # First do some sanity on the input data
         if not validators.url(url):
             raise ValueError(f"The URL: {url} is not valid")
 
-        local_filename = download_text_file(logger=self.logger,
-                                            url=url,
-                                            chunk_size=4096,
-                                            base_path=tempfile.gettempdir())
-        self.count_words_in_local_file(local_filename)
+        chain(download_text_file.s(url=url,
+                                   chunk_size=4096,
+                                   base_path=tempfile.gettempdir()),
+              count_words_in_local_file.s()).apply_async()
 
-    def get_option(self, input_type: str):
-        """ Get the option based on the input type.
-         if not known - raise error. """
+    def run_option(self, input_type: str, input_string: str):
+        """ Run the word count option based on the input type."""
         options = {
-            'string': self.count_words_in_string,       # Handel Simple
-            'path': self.count_words_in_local_file,     # Handel Local File Path
-            'url': self.count_words_from_url            # Handel URL
+            'string': count_words_in_string,    # Handel Simple
+            'path': count_words_in_local_file,  # Handel Local File Path
+            'url': self.count_words_from_url    # Handel URL
         }
-
         # First do some sanity on the input data
         if input_type not in options:
-            raise ValueError("Unknown/Missing input type")
+            self.logger.error("Unknown/Missing input type")
+            return
 
-        return options.get(input_type)
+        try:
+            if input_type == 'string':
+                count_words_in_string.apply_async(kwargs={'source_string': input_string})
+            elif input_type == 'path':
+                count_words_in_local_file.apply_async(kwargs={'file_path': input_string})
+            elif input_type == 'url':
+                self.count_words_from_url(url=input_string)
+            else:
+                raise Exception("Should not be here!")
 
+        except (ValueError, HTTPError) as e:
+            # TODO: More excepts should go here
+            self.logger.error(f"[Error] {e}")
