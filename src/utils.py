@@ -56,9 +56,9 @@ def download_text_file(url: str, chunk_size: int = 1024, base_path=None):
     with requests.get(url, stream=True) as response:
         response.raise_for_status()
 
-        with open(full_path, "wb") as text_file:
+        with open(full_path, "wb") as file:
             for chunk in response.iter_content(chunk_size):
-                text_file.write(chunk)
+                file.write(chunk)
             # TODO: cleanup this file (should be a temp)
 
     print(f"Downloaded {get_file_size_friendly(full_path)}")
