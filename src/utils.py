@@ -1,5 +1,5 @@
 """
-Utils for Print Similar web service
+Utils for Text Insight web service
 """
 import datetime
 import logging

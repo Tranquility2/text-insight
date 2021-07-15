@@ -1,5 +1,5 @@
 """
-Word count service
+Word count service for Text Insight
 """
 import re
 import os

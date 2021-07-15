@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Runnable server for Print Similar web service
+Runnable server for Text Insight web service
 """
 import argparse
 

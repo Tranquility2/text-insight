@@ -1,5 +1,5 @@
 """
-Backend APIs
+Backend APIs for Text Insight web service
 """
 from flask import Flask
 from flask import request
