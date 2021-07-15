@@ -23,7 +23,7 @@ def upload():
     try:
         file = request.files.get('file')
         if file:
-            file_name=secure_filename(file.filename)
+            file_name = secure_filename(file.filename)
             file.save(file_name)
             print(f"Received file {file.filename}, "
                   f"Size={get_file_size_friendly(file_name)}")
