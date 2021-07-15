@@ -62,12 +62,12 @@ class BackendApi:
         def word_statistics(word: str):
             """Receives a word and returns the number of times the word appeared so far
             (in all previous inputs)."""
-            count = int(self.word_count_service.WORDS_COUNT.get(word) or 0)
+            count = int(self.word_count_service.get_word_count_from_redis(word) or 0)
 
             # The design docs asked for a number but for the debugging I prefer a nice info text :)
             if app.debug:
                 return f'The word "{word}" appear {count} times'
             else:
-                return count
+                return str(count)
 
         return app
