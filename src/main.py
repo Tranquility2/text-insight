@@ -7,8 +7,6 @@ import argparse
 from api import BackendApi
 from utils import config_logs
 
-__author__ = "Roy Moore"
-__license__ = "MIT"
 __version__ = "1.0.0"
 
 if __name__ == '__main__':
