@@ -5,7 +5,6 @@ import validators
 
 from collections import Counter
 from os import path
-from requests import HTTPError
 
 from utils import timeit, read_in_chunks, download_text_file
 
@@ -51,7 +50,7 @@ class WordCountService:
                                             base_path=tempfile.gettempdir())
         self.count_words_in_local_file(local_filename)
 
-    def run_option(self, input_type: str, input_data: str):
+    def get_option(self, input_type: str):
         """ Get the option based on the input type.
          if not known - raise error. """
         options = {
@@ -63,9 +62,6 @@ class WordCountService:
         # First do some sanity on the input data
         if input_type not in options:
             raise ValueError("Unknown/Missing input type")
-        try:
-            option = options.get(input_type)
-            option(input_data)
-        except (ValueError, HTTPError) as e:
-            # TODO: More excepts should go here
-            print(f"[Error] {e}")
+
+        return options.get(input_type)
+
