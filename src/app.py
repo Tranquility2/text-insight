@@ -54,7 +54,7 @@ def word_counter():
         # TODO: More excepts should go here
         print(f"[Error] {e}")
 
-    return 'Success', 200
+    return 'Success'
 
 
 @app.route("/word_statistics/<word>", methods=['GET'])
