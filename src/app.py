@@ -25,8 +25,7 @@ def upload():
         if file:
             file_name = secure_filename(file.filename)
             file.save(file_name)
-            print(f"Received file {file.filename}, "
-                  f"Size={get_file_size_friendly(file_name)}")
+            print(f"Received file {file.filename}, Size={get_file_size_friendly(file_name)}")
             return f"{file.filename} saved successfully"
         else:
             return "Missing file"
