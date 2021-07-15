@@ -10,10 +10,13 @@ from src.utils import timeit, read_in_chunks, download_text_file
 
 
 class WordCount:
+    """
+    Word Count Service, handle flows for getting input text from URL, File ,String.
+    """
     WORDS_COUNT = Counter()
 
     @timeit
-    def count_words_in_blob(self, source_string: str):
+    def count_words_in_string(self, source_string: str):
         # First do some sanity on the input data
         if not isinstance(source_string, str):
             raise ValueError("Source string is not valid")
@@ -34,7 +37,7 @@ class WordCount:
         with open(file_path, encoding='UTF-8') as f:
             for piece in read_in_chunks(file_object=f,
                                         chunk_size=1024 * 1024):
-                self.count_words_in_blob(piece)
+                self.count_words_in_string(piece)
 
     @timeit
     def count_words_from_url(self, url: str):
