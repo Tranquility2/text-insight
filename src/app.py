@@ -20,6 +20,9 @@ def ping():
 
 @app.route("/upload", methods=['POST'])
 def upload():
+    """
+    Upload a file to local app dir
+    """
     try:
         file = request.files.get('file')
         if file:
