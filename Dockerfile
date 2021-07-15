@@ -9,4 +9,4 @@ COPY ./src .
 
 EXPOSE 5000
 
-CMD [ "hypercorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD [ "python3", "app.py"]

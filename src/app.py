@@ -1,23 +1,21 @@
-import asyncio
-
-from quart import Quart
-from quart import request
+from flask import Flask
+from flask import request
 
 from service import WordCountService
 
-app = Quart(__name__)
+app = Flask(__name__)
 word_count_service = WordCountService()
 
 # TODO: Document assumption regarding txt files + utf-8
 
 
 @app.route("/ping", methods=['GET'])
-async def ping():
+def ping():
     return "pong"
 
 
 @app.route("/word_counter", methods=['POST'])
-async def word_counter():
+def word_counter():
     """Receives a text input and counts the number of appearances for each word in the input."""
     if app.debug:
         # Print some useful stuff if we are debugging
@@ -31,7 +29,7 @@ async def word_counter():
 
 
 @app.route("/word_statistics/<word>", methods=['GET'])
-async def word_statistics(word: str):
+def word_statistics(word: str):
     """Receives a word and returns the number of times the word appeared so far
     (in all previous inputs)."""
     count = int(word_count_service.WORDS_COUNT.get(word) or 0)
