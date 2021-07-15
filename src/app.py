@@ -1,37 +1,28 @@
 import asyncio
 
 from quart import Quart
-from quart import Response
 from quart import request
-from requests import HTTPError
 
-from service import WordCount
+from service import WordCountService
 
 app = Quart(__name__)
-word_count_service = WordCount()
+word_count_service = WordCountService()
 
 # TODO: Document assumption regarding txt files + utf-8
 
 
 @app.route("/word_counter", methods=['POST'])
-async def word_counter() -> Response:
+async def word_counter():
     """Receives a text input and counts the number of appearances for each word in the input."""
     if app.debug:
         # Print some useful stuff if we are debugging
         print(request.args.to_dict())
-    try:
-        input_type = request.args.get('type')
-        input_string = request.args.get('input')
-        option = word_count_service.get_option(input_type)
-        asyncio.create_task(option(input_string))
-    except (ValueError, HTTPError) as e:
-        # TODO: More excepts should go here
-        print(f"[Error] {e}")
-        status_code = Response(response='', status=500)
-    else:
-        status_code = Response(response='', status=200)
 
-    return status_code
+    input_type = request.args.get('type')
+    input_string = request.args.get('input')
+    await word_count_service.run_option(input_type, input_string)
+
+    return 'Success'
 
 
 @app.route("/word_statistics/<word>", methods=['GET'])

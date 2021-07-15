@@ -1,23 +1,22 @@
 import re
 import os
 import tempfile
-from typing import Callable
-
 import validators
 
 from collections import Counter
 from os import path
+from requests import HTTPError
 
 from utils import timeit, read_in_chunks, download_text_file
 
 
-class WordCount:
+class WordCountService:
     """
     Word Count Service, handle flows for getting input text from URL, File ,String.
     """
     WORDS_COUNT = Counter()
 
-    #@timeit
+    # @timeit
     async def count_words_in_string(self, source_string: str):
         # First do some sanity on the input data
         if not isinstance(source_string, str):
@@ -29,7 +28,7 @@ class WordCount:
         # TODO: Print only on debug
         print(f"Added #{len(words)} elements to the Counter")
 
-    #@timeit
+    # @timeit
     async def count_words_in_local_file(self, file_path: str):
         os_file_path = os.path.normcase(file_path)
         # First do some sanity on the input data
@@ -41,7 +40,7 @@ class WordCount:
                                         chunk_size=1024 * 1024):
                 await self.count_words_in_string(piece)
 
-    #@timeit
+    # @timeit
     async def count_words_from_url(self, url: str):
         # First do some sanity on the input data
         if not validators.url(url):
@@ -52,7 +51,7 @@ class WordCount:
                                             base_path=tempfile.gettempdir())
         await self.count_words_in_local_file(local_filename)
 
-    def get_option(self, input_type) -> Callable:
+    async def run_option(self, input_type: str, input_data: str):
         """ Get the option based on the input type.
          if not known - raise error. """
         options = {
@@ -64,5 +63,9 @@ class WordCount:
         # First do some sanity on the input data
         if input_type not in options:
             raise ValueError("Unknown/Missing input type")
-
-        return options.get(input_type)
+        try:
+            option = options.get(input_type)
+            await option(input_data)
+        except (ValueError, HTTPError) as e:
+            # TODO: More excepts should go here
+            print(f"[Error] {e}")
