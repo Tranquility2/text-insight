@@ -37,7 +37,7 @@ class BackendApi:
                 else:
                     return "Missing file"
             except (TypeError, KeyError) as e:
-                # TODO: More excepts should go here
+                # More excepts should go here
                 self.logger.error(f"[Error] {e}")
                 return e
 

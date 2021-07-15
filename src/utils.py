@@ -11,7 +11,7 @@ from typing import Any, Callable
 from os import path
 
 
-def config_logs(name, level=logging.DEBUG):
+def config_logs(name: str, level=logging.DEBUG):
     """ Config logger """
     logger = logging.getLogger(name)
     logger.setLevel(level)
@@ -57,6 +57,6 @@ def read_in_chunks(file_object, chunk_size: int = 1024) -> str:
         yield data
 
 
-def get_file_size_friendly(file_path: str):
+def get_file_size_friendly(file_path: str) -> str:
     file_size = path.getsize(file_path)
     return humanfriendly.format_size(file_size, binary=True)
