@@ -3,3 +3,4 @@ validators~=0.18.2
 humanfriendly~=9.2
 Flask~=2.0.1
 Werkzeug~=2.0.1
+gunicorn~=19.9.0

@@ -1,4 +1,8 @@
+"""
+Utils for Print Similar web service
+"""
 import datetime
+import logging
 import time
 import requests
 import humanfriendly
@@ -6,6 +10,19 @@ import humanfriendly
 from functools import wraps
 from typing import Any, Callable
 from os import path
+
+
+def config_logs(name, level=logging.DEBUG):
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    ch = logging.StreamHandler()
+    ch.setLevel(level)
+    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    formatter.datefmt = '%H:%M:%S'
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+    return logger
 
 
 def timeit(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -46,13 +63,13 @@ def get_file_size_friendly(file_path: str):
 
 
 @timeit
-def download_text_file(url: str, chunk_size: int = 1024, base_path=None):
+def download_text_file(logger, url: str, chunk_size: int = 1024, base_path=None):
     """Basic file downloader using an iterator.
     Default chunk size: 1k."""
     # TODO: Document assumption that files name is available in the url
     local_filename = url.split('/')[-1]
     full_path = path.join(base_path, local_filename)
-    print(f"Downloading to {full_path}")
+    logger.info(f"Downloading to {full_path}")
     with requests.get(url, stream=True) as response:
         response.raise_for_status()
 
@@ -61,5 +78,5 @@ def download_text_file(url: str, chunk_size: int = 1024, base_path=None):
                 file.write(chunk)
             # TODO: cleanup this file (should be a temp)
 
-    print(f"Downloaded {get_file_size_friendly(full_path)}")
+    logger.info(f"Downloaded {get_file_size_friendly(full_path)}")
     return full_path

@@ -1,3 +1,6 @@
+"""
+Word count service
+"""
 import re
 import os
 import tempfile
@@ -15,7 +18,10 @@ class WordCountService:
     """
     WORDS_COUNT = Counter()
 
-    # @timeit
+    def __init__(self, logger):
+        self.logger = logger
+        self.logger.info(f"New -WordCountService-")
+
     def count_words_in_string(self, source_string: str):
         # First do some sanity on the input data
         if not isinstance(source_string, str):
@@ -24,10 +30,9 @@ class WordCountService:
         words = re.findall(r'\w+', source_string.lower())
         self.WORDS_COUNT.update(words)
 
-        # TODO: Print only on debug
-        print(f"Added #{len(words)} elements to the Counter")
+        self.logger.debug(f"Added #{len(words)} elements to the Counter")
 
-    # @timeit
+    @timeit
     def count_words_in_local_file(self, file_path: str):
         os_file_path = os.path.normcase(file_path)
         # First do some sanity on the input data
@@ -39,13 +44,14 @@ class WordCountService:
                                         chunk_size=1024 * 1024):
                 self.count_words_in_string(piece)
 
-    # @timeit
+    @timeit
     def count_words_from_url(self, url: str):
         # First do some sanity on the input data
         if not validators.url(url):
             raise ValueError(f"The URL: {url} is not valid")
 
-        local_filename = download_text_file(url=url,
+        local_filename = download_text_file(logger=self.logger,
+                                            url=url,
                                             chunk_size=4096,
                                             base_path=tempfile.gettempdir())
         self.count_words_in_local_file(local_filename)
