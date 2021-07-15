@@ -1,52 +1,41 @@
-from flask import Flask
-from flask import Response
-from flask import request
+import asyncio
+
+from quart import Quart
+from quart import Response
+from quart import request
 from requests import HTTPError
 
-from src.service import WordCount
+from service import WordCount
 
-app = Flask(__name__)
+app = Quart(__name__)
 word_count_service = WordCount()
 
 # TODO: Document assumption regarding txt files + utf-8
 
 
 @app.route("/word_counter", methods=['POST'])
-def word_counter() -> Response:
+async def word_counter() -> Response:
     """Receives a text input and counts the number of appearances for each word in the input."""
     if app.debug:
         # Print some useful stuff if we are debugging
         print(request.args.to_dict())
-
-    options = {
-        'string': word_count_service.count_words_in_string,       # Handel Simple
-        'path': word_count_service.count_words_in_local_file,   # Handel Local File Path
-        'url':  word_count_service.count_words_from_url         # Handel URL
-    }
-
-    def raise_(ex):
-        """Simple raiser to help with the lambda.
-        (as we cannot raise in lambda but we can invoke a method)"""
-        raise ex
-
     try:
         input_type = request.args.get('type')
-        # Get the option based on the input type, if not found raise error
-        option = options.get(input_type,
-                             lambda x: raise_(ValueError("Unknown/Missing input type")))
-        option(request.args.get('input'))
+        input_string = request.args.get('input')
+        option = word_count_service.get_option(input_type)
+        asyncio.create_task(option(input_string))
     except (ValueError, HTTPError) as e:
         # TODO: More excepts should go here
         print(f"[Error] {e}")
-        status_code = Response(status=500)
+        status_code = Response(response='', status=500)
     else:
-        status_code = Response(status=200)
+        status_code = Response(response='', status=200)
 
     return status_code
 
 
 @app.route("/word_statistics/<word>", methods=['GET'])
-def word_statistics(word: str):
+async def word_statistics(word: str):
     """Receives a word and returns the number of times the word appeared so far
     (in all previous inputs)."""
     count = int(word_count_service.WORDS_COUNT.get(word) or 0)
