@@ -19,7 +19,7 @@ def word_counter() -> Response:
         print(request.args.to_dict())
 
     options = {
-        'string': word_count_service.count_words_in_blob,       # Handel Simple
+        'string': word_count_service.count_words_in_string,       # Handel Simple
         'path': word_count_service.count_words_in_local_file,   # Handel Local File Path
         'url':  word_count_service.count_words_from_url         # Handel URL
     }
