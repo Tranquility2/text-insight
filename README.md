@@ -7,8 +7,8 @@ A web service used to extract and report word count.
 ![Overview](images/overview.jpg)  
 Based on:  
 
-| Python 3  | Nginx  |  Gunicorn | Flask  | Celery  |  Redis |
-|---|---|---|---|---|---|
+| Python 3  | Nginx  |  Gunicorn | Flask  | Celery  |  Redis | Docker |
+|---|---|---|---|---|---|---|
  
 ## How to Use
 ### Tools
