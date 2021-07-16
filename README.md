@@ -55,7 +55,7 @@ _GET /api/v1/word_statistics/\<word>_
 Receives a word and returns the number of times the word appeared so far (in all previous
 inputs).  
 Example:  
-`http <server-ip>:5000/word_statistics/in`
+`http <server-ip>:5000/word_statistics/amazing` (this will return the count for the word "amazing")
 
 ## Notes
 ### Assumptions
