@@ -12,14 +12,15 @@ from os import path
 from utils import read_in_chunks, get_file_size_friendly
 
 app = Celery('tasks', broker='redis://localhost:6379/1')
-redis_conn = redis.Redis(host='localhost', port=6379, db=0)
+db = redis.Redis(host='localhost', port=6379, db=0)
 
 
 @app.task
 def count_words_in_string_task(source_string: str):
+    """ Count the words in a given string and Update the DB"""
     words = re.findall(r'\w+', source_string.lower())
     print(f"Found #{len(words)} elements", end="")
-    pipe = redis_conn.pipeline()
+    pipe = db.pipeline()
     for word in words:
         pipe.hincrby('known', word, 1)  # This is atomic
     pipe.execute()
@@ -27,6 +28,8 @@ def count_words_in_string_task(source_string: str):
 
 @app.task
 def count_words_in_local_file_task(file_path: str):
+    """ Count the words in a given local file.
+    This is utilizing the count_words_in_string_task that we already have."""
     os_file_path = os.path.normcase(file_path)
     # First do some sanity on the input data
     if not path.isfile(os_file_path):

@@ -21,13 +21,15 @@ class WordCountService:
     def __init__(self, logger):
         self.logger = logger
         self.logger.info(f"New -WordCountService-")
-        self.rd = redis.Redis(host='localhost', port=6379, db=0)
+        self.db = redis.Redis(host='localhost', port=6379, db=0)
 
     def get_word_count_from_redis(self, word: str):
-        return self.rd.hget(f'known', word)
+        """ Fetch the word count from the DB"""
+        return self.db.hget(f'known', word)
 
     @staticmethod
     def count_words_in_string(source_string: str):
+        """ Wrapper for the task that counts words in a given string"""
         # First do some sanity on the input data
         if not isinstance(source_string, str):
             raise ValueError("Source string is not valid")
@@ -36,6 +38,7 @@ class WordCountService:
 
     @staticmethod
     def count_words_in_local_file(file_path: str):
+        """ Wrapper for the task that counts words in local file"""
         os_file_path = os.path.normcase(file_path)
         # First do some sanity on the input data
         if not path.isfile(os_file_path):
@@ -45,6 +48,8 @@ class WordCountService:
 
     @staticmethod
     def count_words_from_url(url: str):
+        """ Wrapper for the tasks that counts words based on a given URL.
+        1st we download the file and then we count it ad a local file."""
         # First do some sanity on the input data
         if not validators.url(url):
             raise ValueError(f"The URL: {url} is not valid")
