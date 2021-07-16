@@ -21,7 +21,7 @@ A great tool, used in the testing script and generally very recommended
 Use the provided script `build_and_run.sh`   
 (Alternatively you can build and run it yourself, or use the `main.py` script for debugging)
 ### Testing
-Use the provided script `run_test.sh`
+Use the provided script `run_test.sh` (See [sample](./images/test_sample.png))
 
 ## Web Service API
 The web service listen on port 5000 and support the following endpoints:
