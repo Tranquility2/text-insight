@@ -42,7 +42,6 @@ def count_words_in_local_file_task(file_path: str):
 def download_text_file_task(url: str, chunk_size: int = 1024, base_path=None):
     """Basic file downloader using an iterator.
     Default chunk size: 1k."""
-    # TODO: Document assumption that files name is available in the url
     local_filename = url.split('/')[-1]
     full_path = path.join(base_path, local_filename)
     print(f"Downloading to {full_path}")
