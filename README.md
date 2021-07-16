@@ -59,13 +59,13 @@ Example:
 
 ## Notes
 ### Assumptions
-* we are only dealing with **text files** that are **encoded in utf-8** 
+* We are only dealing with **text files** that are **encoded in utf-8** 
 * For the URL API, files name is available in the url, for example: "https://site.temp/file.txt"
+* This design is using prod config to support many requests but the extent was not fully tested
 
 ### Limitations
 * Upload API is limited to 200 MB (Can be changed on the nginx conf)
 
 ### Future possible enhancements
 * Would be cool to add support for txt files that are compressed in zip
-* Right now api request get responded immediately, it will be a nice improvement to add a ticketing system,
-  this way we can track the process using another API
+* Right now api request get responded immediately, it will be a nice improvement to add a ticketing system, this way we can track the process using another (new) API
