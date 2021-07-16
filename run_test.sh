@@ -12,8 +12,8 @@ if ! http --version > /dev/null 2>&1; then
     exit 1
 fi
 
-BASE_POST_URL_COMMAND="http --print b POST 0.0.0.0:5000"
-BASE_GET_URL_COMMAND="http --print b GET 0.0.0.0:5000"
+BASE_POST_URL_COMMAND="http --print b POST 0.0.0.0:5000/api/v1"
+BASE_GET_URL_COMMAND="http --print b GET 0.0.0.0:5000/api/v1"
 TEST_STRING_1="Hi! My name is (what?), my name is (who?), my name is Slim Shady"
 
 function cleanup {
@@ -23,9 +23,20 @@ function cleanup {
 trap cleanup EXIT
 
 function upload_file() {
-  upload=$(http --form --print b POST 0.0.0.0:5000/upload file@"$1")
+  upload=$(http --form --print b POST 0.0.0.0:5000/api/v1/upload file@"$1")
   printf '%s\n' "$upload"
   #TODO: add some more sanity on upload
+}
+
+function test_ping() {
+  printf 'Running Ping Test |'
+  res=$($BASE_GET_URL_COMMAND/ping)
+  if [ "$res" == "pong" ]; then
+    echo " success 💙"
+  else
+    echo " failed ✕ (got $res)"
+    exit 1
+  fi
 }
 
 function test_word_count() {
@@ -58,6 +69,9 @@ echo "-> Running"
 id=$(docker run --rm -p 5000:5000/tcp -d text_insight)
 echo "-> Warmup..."
 sleep 5 # NOTE: you may need to set this to a higher number
+
+# Ping test
+test_ping
 
 # String test
 test_word_count "string" "$TEST_STRING_1" "Success"

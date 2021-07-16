@@ -9,6 +9,14 @@ from werkzeug.utils import secure_filename
 from service import WordCountService
 from utils import get_file_size_friendly, config_logs
 
+ROOT_URL = "/"
+BASE_URL = ROOT_URL + "api/"
+VERSION_URL = BASE_URL + 'v1/'
+PING_URL = VERSION_URL + 'ping'
+UPLOAD_URL = VERSION_URL + 'upload'
+WORD_COUNTER_URL = VERSION_URL + 'word_counter'
+WORD_STATISTICS_URL = VERSION_URL + 'word_statistics/<word>'
+
 
 class BackendApi:
     def __init__(self):
@@ -18,11 +26,11 @@ class BackendApi:
     def get_app(self):
         app = Flask(__name__)
 
-        @app.route("/ping", methods=['GET'])
+        @app.route(PING_URL, methods=['GET'])
         def ping():
             return "pong"
 
-        @app.route("/upload", methods=['POST'])
+        @app.route(UPLOAD_URL, methods=['POST'])
         def upload():
             """
             Upload a file to local app dir
@@ -41,7 +49,7 @@ class BackendApi:
                 self.logger.error(f"[Error] {e}")
                 return e
 
-        @app.route("/word_counter", methods=['POST'])
+        @app.route(WORD_COUNTER_URL, methods=['POST'])
         def word_counter():
             """Receives a text input and counts the number of appearances for each word in the input."""
             self.logger.debug(request.args.to_dict())
@@ -54,7 +62,7 @@ class BackendApi:
 
             return 'Success'
 
-        @app.route("/word_statistics/<word>", methods=['GET'])
+        @app.route(WORD_STATISTICS_URL, methods=['GET'])
         def word_statistics(word: str):
             """Receives a word and returns the number of times the word appeared so far
             (in all previous inputs)."""
