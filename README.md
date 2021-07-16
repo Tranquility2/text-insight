@@ -9,8 +9,7 @@ Based on:
 
 | Python 3  | Nginx  |  Gunicorn | Flask  | Celery  |  Redis |
 |---|---|---|---|---|---|
-
----
+ 
 ## How to Use
 ### Tools
 #### [Docker](https://www.docker.com/products/docker-desktop)
@@ -57,8 +56,8 @@ Receives a word and returns the number of times the word appeared so far (in all
 inputs).  
 Example:  
 `http <server-ip>:5000/word_statistics/in`
----
-##Notes
+
+## Notes
 ### Assumptions
 * we are only dealing with **text files** that are **encoded in utf-8** 
 * For the URL API, files name is available in the url, for example: "https://site.temp/file.txt"
