@@ -65,7 +65,8 @@ test_word_statistics "hello" 0
 
 # Local file Test
 echo "-> Uploading test file"
-upload_file ./tmp/hamlet.txt
+# https://gist.githubusercontent.com/provpup/2fc41686eab7400b796b/raw/b575bd01a58494dfddc1d6429ef0167e709abf9b/hamlet.txt
+upload_file ./tmp/hamlet.txt #
 test_word_count "path" "hamlet.txt" "Success"
 test_word_statistics "lord" 0 # Not updated yet, need to give it some time to process
 echo "-> Waiting on update"
