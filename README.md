@@ -32,7 +32,7 @@ Simple ping request, respond with "pong"
 _POST /api/v1/upload_  
 Basic upload used to work with local files (mainly for testing)  
 Example:  
-`http --form POST <server-ip>>:5000/upload file@./tmp/file.txt`
+`http --form POST <server-ip>:5000/upload file@./tmp/file.txt`
 ### word_counter
 _POST /api/v1/word_counter?type=<input_type>?input=<input_date>_   
 Receives a text input and counts the number of appearances for each word in the input.  
