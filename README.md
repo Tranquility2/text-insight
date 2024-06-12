@@ -1,3 +1,11 @@
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
+![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white)
+![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+![Celery](https://img.shields.io/badge/celery-%23a9cc54.svg?style=for-the-badge&logo=celery&logoColor=ddf4a4)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+
 # Text Insight
 
 A web service used to extract and report word count.  
@@ -5,11 +13,7 @@ A web service used to extract and report word count.
 
 ## Overview
 ![Overview](images/overview.jpg)  
-Based on:  
 
-| Python 3  | Nginx  |  Gunicorn | Flask  | Celery  |  Redis | Docker |
-|---|---|---|---|---|---|---|
- 
 ## How to Use
 ### Tools
 #### [Docker](https://www.docker.com/products/docker-desktop)
